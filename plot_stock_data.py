@@ -3,12 +3,14 @@ from flask import Flask, render_template, request
 from bokeh.embed import components
 from bokeh.models import DatetimeTickFormatter
 import pandas as pd
+import os 
 
 def plot_stock_data(ticker_symbol, options):
     do_cls, do_open, do_high, do_low = options
+   
+    API_KEY = os.environ['ALPHA_VANTAGE_KEY']
     
-
-    url= "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="+ticker_symbol+"&apikey=U4AV38IHD6RSSF9Q&datatype=csv" 
+    url= "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="+ticker_symbol+"&apikey="+API_KEY+"&datatype=csv" 
     
 
     ## Using pandas to process the data.
@@ -20,8 +22,7 @@ def plot_stock_data(ticker_symbol, options):
     ## The API returns data of last 100 days.
     stock_data = stock_data[:30]
     ## Plotting using Bokeh
-    p = figure(#title="Stock data", 
-            x_axis_label='Date', y_axis_label='Stock price', x_axis_type='datetime')
+    p = figure(title="(source: alphavantage.co)", x_axis_label='Date', y_axis_label='Stock price', x_axis_type='datetime')
     
     if do_open:
         p.line(stock_data.index.values, stock_data.open.values, legend="Open", line_width=2, color='blue')
